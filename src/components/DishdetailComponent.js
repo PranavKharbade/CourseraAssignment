@@ -1,69 +1,66 @@
 import React, { Component } from "react"
+import { Card, CardImg, CardText, CardBody,
+    CardTitle, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import { Link } from 'react-router-dom';
 
-import {
-    Card, CardImg, CardText, CardBody,
-    CardTitle,
-} from 'reactstrap';
+function RenderComments({ comments }) {
+    console.log("commentsc",comments)
+    if (comments != null)
+        return (
+            // {comments.map((comment)=>{
 
-export default class DishDetail extends Component {
-    constructor(props) {
-        super(props);
+            // })}
+            <ul class="list-unstyled">
+                <li >{comments.comment}<br />
+                    --{comments.author}, {comments.date}</li>
+                    {/* new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(comments.date))) */}
+            </ul>
 
-    }
-    monthName(mon) {
-        return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][mon - 1];
-    }
+        );
+    else
+        return (
+            <div></div>
+        );
+}
 
-
-    parseISOString(s) {
-        var b = s.split("T");
-        var c = b[0].split("-")
-        var n = this.monthName(c[1]);
-        return `${n} ${c[2]}, ${c[0]}`
-    }
-
-    renderComments(comment) {
-        if (comment != null)
-            return (
-                <ul class="list-unstyled">
-                    <li >{comment.comment}<br />
-                        --{comment.author}, {this.parseISOString(comment.date)}</li>
-                </ul>
-
-            );
-        else
-            return (
-                <div></div>
-            );
-    }
-    render() {
-        const dish = this.props.selectedDish
+function RenderDish({ dish }) {
+    return(
+    <Card>
+        <CardImg top src={dish.image} alt={dish.name} />
+        <CardBody>
+            <CardTitle>{dish.name}</CardTitle>
+            <CardText>{dish.description}</CardText>
+        </CardBody>
+    </Card>
+    )
+}
+export default function DishDetail(props) {
         return (
             <div className="container">
-                <div className="row">
-                    <div className="col-12 col-md-5 m-1">
-
-                        <Card>
-                            <CardImg top src={dish.image} alt={dish.name} />
-                            <CardBody>
-                                <CardTitle>{dish.name}</CardTitle>
-                                <CardText>{dish.description}</CardText>
-                            </CardBody>
-                        </Card>
-                    </div>
-
-                    <div className="col-12 col-md-5 m-1" >
-                        <Card style={{ height: "100%" }}>
-                            <h4 style={{ justifyContent: "left" }}>Comments</h4>
-                            <CardBody>
-                               
-                                    {this.props.selectedDish.comments.map((comments) => (<ul key={comments.id} class="list-unstyled">{this.renderComments(comments)} </ul>))}
-                               
-                            </CardBody>
-                        </Card>
-                    </div>
+            <div className="row">
+                <Breadcrumb>
+                    <BreadcrumbItem><Link to="/menu">Menu</Link></BreadcrumbItem>
+                    <BreadcrumbItem active>{props.dish.name}</BreadcrumbItem>
+                </Breadcrumb>
+                <div className="col-12">
+                    <h3>{props.dish.name}</h3>
+                    <hr />
+                </div>                
+            </div>
+            <div className="row">
+                <div className="col-12 col-md-5 m-1">
+                    <RenderDish dish={props.dish} />
+                </div>
+                <div className="col-12 col-md-5 m-1">
+                <Card>
+                <CardBody>
+            {props.comments.map((comment)=>{return(<RenderComments comments={comment} />)})}
+            </CardBody>
+            </Card>
                 </div>
             </div>
+            </div>
         );
-    }
+    
 }
+
